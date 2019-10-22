@@ -40,13 +40,13 @@ stages:
             SonarQube: 'SonarCloud'
             scannerMode: 'CLI'
             configMode: 'manual'
-            cliProjectKey: 'Eldarrin_nodejsdock'
-            cliProjectName: 'nodejsdock'
+            cliProjectKey: 'Durgesh-coder-ust_AKS_DevOps'
+            cliProjectName: 'AKS_DevOps'
             cliSources: '.'
             extraProperties: |
               # Additional properties that will be passed to the scanner,
               # Put one key=value per line, example:
-              sonar.organization=eldarrin-github
+              sonar.organization=durgesh-coder-ust
 
         - task: SonarQubeAnalyze@4
 
@@ -86,35 +86,3 @@ stages:
 
         - upload: manifests
           artifact: manifests
-
-- stage: Deploy
-  displayName: Deploy Stage
-  dependsOn: Build
-  jobs:
-    - deployment: Deploy
-      displayName: Deploy
-      pool:
-        vmImage: $(vmImageName)
-      environment: 'Deepsea-2118.default'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              - task: KubernetesManifest@0
-                displayName: Create imagePullSecret
-                inputs:
-                  action: createSecret
-                  secretName: $(imagePullSecret)
-                  dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
-              - task: KubernetesManifest@0
-                displayName: Deploy to Kubernetes cluster
-                inputs:
-                  action: deploy
-                  manifests: |
-                    $(Pipeline.Workspace)/manifests/deployment.yml
-                    $(Pipeline.Workspace)/manifests/service.yml
-                  imagePullSecrets: |
-                    $(imagePullSecret)
-                  containers: |
-                    $(containerRegistry)/$(imageRepository):$(tag)
