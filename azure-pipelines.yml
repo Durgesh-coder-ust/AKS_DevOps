@@ -37,7 +37,7 @@ stages:
       steps:
         - task: SonarQubePrepare@4
           inputs:
-            SonarQube: 'SonarCloud'
+            SonarQube: 'Sonar Connection'
             scannerMode: 'CLI'
             configMode: 'manual'
             cliProjectKey: 'Durgesh-coder-ust_AKS_DevOps'
